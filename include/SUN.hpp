@@ -134,5 +134,32 @@ namespace sun {
     SU<N> result(A);
     return result -= B;
   }
+  template <class R> SU<3> SU3rand(R& Rand){
+    SU<3> result;
+    static double twopi = std::atan(1.0) * 8.0;
+    static double soneo3 = std::sqrt( 1./ 3);
+    double g[8], r, t;
+    // get flat distribution
+    Rand.ranlxd(g, g+8);
+    // make gaussian
+    for (int i = 0; i < 8; i+=2){
+      t = twopi*g[i];
+      r = std::sqrt( -std::log((1. - g[i+1])) );
+      g[i]   = r*std::cos(t);
+      g[i+1] = r*std::sin(t);
+    }
+    g[7] *= soneo3;
+
+    result(0) = std::complex<double>(0,g[7]+g[6]);
+    result(1) = std::complex<double>(g[1],g[0]);
+    result(2) = std::complex<double>(g[3],g[2]);
+    result(3) = std::complex<double>(-g[1],g[0]);
+    result(4) = std::complex<double>(0,g[7]-g[6]);
+    result(5) = std::complex<double>(g[5],g[4]);
+    result(6) = std::complex<double>(-g[3],g[2]);
+    result(7) = std::complex<double>(g[4],-g[5]);
+    result(8) = std::complex<double>(0,-g[7]*2);
+    return result;
+  }
 }
 #endif

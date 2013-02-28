@@ -1,3 +1,5 @@
+#ifndef SUN_H
+#define SUN_H
 #include <complex>
 #include <tr1/array>
 
@@ -79,3 +81,4 @@ namespace sun {
     rep_t rep;
   };
 }
+#endif

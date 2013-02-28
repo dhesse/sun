@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = foreign
-AM_CPPFLAGS = -I${GTEST_DIR}/include -I${GTEST_DIR} -I..\
+AM_CPPFLAGS = -I${GTEST_DIR}/include -I${GTEST_DIR} -I.. -I.\
 	-I${top_srcdir} -I${top_srcdir}/include 
 lib_LTLIBRARIES = lib/libgtest.la lib/libgtest_main.la
 lib_libgtest_la_SOURCES = ${GTEST_DIR}/src/gtest-all.cc

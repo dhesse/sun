@@ -1,24 +1,10 @@
 #include <gtest/gtest.h>
 #include <SUN.hpp>
+#include <Helper.hpp>
 
 using namespace sun;
 
-template <int N> SU<N> rsu(){
-  SU<N> A;
-  for (int n =0; n < N*N; ++n)
-    A(n) = typename SU<N>::data_t(rand(), rand());
-  return A;
-}
-
-template <int N> bool almost_equal(const SU<N>& A, const SU<N>& B){
-  bool result = true;
-  for (int n =0; n < N*N && result; ++n)
-    if (abs( A(n) - B(n) ) > std::numeric_limits<double>::epsilon()*5)
-      result = false;
-  return result;
-}
-
-TEST(Arithmetic, SU3assign){
+TEST(Arithmetic, UnaryOp){
   SU<3> A = rsu<3>(), B(A), C(A), D(A);
   B += A;
   C *= 2;
@@ -67,3 +53,5 @@ TEST(Arithemtic, SU3xSU3UnariKnownValues){
   ASSERT_TRUE(almost_equal(A, C));
 }
 
+TEST(Arithemtic, BinaryOp){
+}

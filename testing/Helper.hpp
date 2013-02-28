@@ -1,8 +1,13 @@
 #ifndef HELPER_H
 #define HLPER_H
 #include <SUN.hpp>
+#include <gtest/gtest.h>
 
 using namespace sun;
+
+#define ASSERT_CPLX_EQ(a ,b)			\
+  ASSERT_DOUBLE_EQ((a).real(), (b).real());	\
+  ASSERT_DOUBLE_EQ((a).imag(), (b).imag());
 
 template <int N> SU<N> rsu(){
   SU<N> A;

@@ -116,3 +116,17 @@ TEST(Arithmetic, Associativity){
   ASSERT_TRUE(almost_equal(A * (B * C), (A * B) * C, 9));
   ASSERT_TRUE(almost_equal(A + (B + C), (A + B) + C, 9));
 }
+
+TEST(Arithmetic, dagger){
+  SU<4> A(rsu<4>()), B(A.dag()), C;
+  for (int i = 0; i < 4; ++i)
+    for (int j = 0; j < 4; ++j)
+      C(i, j) = A(j, i).conj();
+  ASSERT_TRUE(equal(A,B));
+}
+
+TEST(Arithmetic, trace){
+  SU<4> A(rsu<4>());
+  SU<4>::data_t known = A(0,0) + A(1,1) + A(2,2) + A(3,3);
+  ASSERT_CPLX_EQ(known, A.tr());
+}

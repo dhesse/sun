@@ -6,7 +6,6 @@ AC_INIT([SUN], [0.0], [herr.dirk.hesse@gmail.com])
 AM_INIT_AUTOMAKE()
 LT_INIT
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_SRCDIR([include/Arithmetic.hpp])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.

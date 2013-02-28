@@ -8,6 +8,9 @@ lib_libgtest_main_la_LIBADD = lib/libgtest.la
 
 LDADD = lib/libgtest_main.la
 
-bin_PROGRAMS = Arithmetic
+bin_PROGRAMS = Generic Arithmetic
 
 Arithmetic_SOURCES = Arithmetic.cc
+Generic_SOURCES = Generic.cc
+
+TESTS = ${bin_PROGRAMS}

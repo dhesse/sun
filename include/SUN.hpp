@@ -77,6 +77,24 @@ namespace sun {
       self_t result;
       return detail::sub_assign(result, *this);
     }
+    ////////////////////////////////////////////////////////////
+    //
+    //  'Special' functions like trace, dagger.
+    //
+    //  \date      Thu Feb 28 17:32:16 2013
+    //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
+    data_t tr() const{
+      data_t tmp = 0;
+      for (int i = 0; i < N; ++i) tmp += rep[i*N +i];
+      return tmp;
+    }
+    self_t dag() const{
+      self_t result;
+      for (int i = 0; i < N; ++i)
+	for (int j = 0; j < N; ++j)
+	  result(i, j) = conj((*this)(j, i));
+      return result;
+    }
   private:
     rep_t rep;
   };

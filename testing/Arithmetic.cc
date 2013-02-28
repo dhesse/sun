@@ -121,8 +121,8 @@ TEST(Arithmetic, dagger){
   SU<4> A(rsu<4>()), B(A.dag()), C;
   for (int i = 0; i < 4; ++i)
     for (int j = 0; j < 4; ++j)
-      C(i, j) = A(j, i).conj();
-  ASSERT_TRUE(equal(A,B));
+      C(i, j) = conj(A(j, i));
+  ASSERT_TRUE(equal(C,B));
 }
 
 TEST(Arithmetic, trace){

@@ -95,6 +95,11 @@ namespace sun {
 	  result(i, j) = conj((*this)(j, i));
       return result;
     }
+    double norm() const{
+      double tmp = 0;
+      for (int i = 0; i < N; ++i) tmp += abs(rep[i]);
+      return tmp;
+    }
   private:
     rep_t rep;
   };

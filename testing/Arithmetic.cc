@@ -54,4 +54,25 @@ TEST(Arithemtic, SU3xSU3UnariKnownValues){
 }
 
 TEST(Arithemtic, BinaryOp){
+  SU<3> A(rsu<3>()), B, C, D(A), E(A);
+  // binary plus
+  B = A + A;
+  C = B + A;
+  D *= 2;
+  E *= 3;
+  ASSERT_TRUE(almost_equal(D, B));
+  ASSERT_TRUE(almost_equal(E, C));
+  // binary minus
+  B = C - B;
+  C = D - A;
+  ASSERT_TRUE(almost_equal(A, B));
+  ASSERT_TRUE(almost_equal(A, C));
+  // binary *
+  B = 2 * A;
+  C = A * 3;
+  ASSERT_TRUE(almost_equal(D, B));
+  ASSERT_TRUE(almost_equal(E, C));
+  // binary /
+  D = B / 2;
+  ASSERT_TRUE(almost_equal(A, D));
 }

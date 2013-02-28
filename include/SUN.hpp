@@ -80,5 +80,36 @@ namespace sun {
   private:
     rep_t rep;
   };
+  ////////////////////////////////////////////////////////////
+  //
+  //  Binary arithmetic.
+  //
+  //  \date      Thu Feb 28 16:50:49 2013
+  //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
+
+  template <int N, class C> SU<N> operator*(const SU<N>& A, const C& c){
+    SU<N> result(A);
+    return result *= c;
+  }
+  template <int N, class C> SU<N> operator*( const C& c, const SU<N>& A){
+    SU<N> result(A);
+    return result *= c;
+  }
+  template <int N> SU<N> operator*( const SU<N>& A, const SU<N>& B){
+    SU<N> result(A);
+    return result *= B;
+  }
+  template <int N, class C> SU<N> operator/(const SU<N>& A, const C& c){
+    SU<N> result(A);
+    return result /= c;
+  }
+  template <int N> SU<N> operator+( const SU<N>& A, const SU<N>& B){
+    SU<N> result(A);
+    return result += B;
+  }
+  template <int N> SU<N> operator-( const SU<N>& A, const SU<N>& B){
+    SU<N> result(A);
+    return result -= B;
+  }
 }
 #endif

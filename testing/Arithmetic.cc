@@ -136,3 +136,17 @@ TEST(ExpressionTemplates, Product){
   SU<3> D(detail::MatrixProduct<SU<3>, SU<3>, 3>(A,B));
   ASSERT_TRUE(almost_equal(D,C));
 }
+
+TEST(ExpressionTemplates, TripleProduct){
+  typedef detail::MatrixProduct<SU<3>, SU<3>, 3> mp;
+  typedef detail::MatrixProduct<mp, SU<3>, 3> mpp;
+  SU<3> A(rsu<3>()), B(rsu<3>()), C(rsu<3>()), D = A*B*C;
+  SU<3> E = mpp(mp(A, B), C);
+  ASSERT_TRUE(almost_equal(D, E));
+}
+
+TEST(ExpressionTemplates, Scale){
+  typedef detail::ScaledMatrix<double, SU<3>, 3> scm;
+  SU<3> A(rsu<3>()), B(scm(1.5, A));
+  ASSERT_TRUE(almost_equal(B, A*1.5));
+}

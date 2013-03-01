@@ -2,6 +2,7 @@
 #define SUN_H
 #include <cplx.hpp>
 #include <tr1/array>
+#include <complex>
 
 namespace sun {
 
@@ -90,8 +91,52 @@ namespace sun {
       const C1& a;
       const C2& b;
     };
+    ////////////////////////////////////////////////////////////
+    //
+    //  Expression template for product with number.
+    //
+    //  \date      Fri Mar  1 15:00:20 2013
+    //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
+    template <class C1, class C2, int N> class ScaledMatrix :
+      public MatrixExpression<ScaledMatrix<C1, C2, N>, N>
+    {
+    public:
+      typedef typename
+      MatrixExpression<ScaledMatrix<C1, C2, N>, N>::data_t data_t;
+      ScaledMatrix(const C1& aa, const MatrixExpression<C2, N>& bb) :
+	a(aa), b(bb){ };
+      data_t operator()(int i, int j) const { return impl(i,j,a); }
+      data_t operator()(int i) const { return impl(i,a); }
+    private:
+      // make sure this only gets called for int, double, and complex
+      data_t impl(int i, int j, int) const { return a*b(i,j); }
+      data_t impl(int i, int j, double) const { return a*b(i,j); }
+      data_t impl(int i, int j, data_t) const { return a*b(i,j); }
+      data_t impl(int i, int) const { return b(i)*(double)a; }
+      data_t impl(int i, double) const { return a*b(i); }
+      data_t impl(int i, data_t) const { return a*b(i); }
+      const C1& a;
+      const C2& b;
+    };
+    ////////////////////////////////////////////////////////////
+    //
+    //  Expression template for dagger.
+    //
+    //  \date      Fri Mar  1 16:26:01 2013
+    //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
+    template <class C, int N> class MatrixDagger :
+      public MatrixExpression<MatrixDagger<C, N>, N>
+    {
+    public:
+      typedef typename
+      MatrixExpression<MatrixDagger<C, N>, N>::data_t data_t;
+      MatrixDagger(const MatrixExpression<C, N>& a) : a_(a) { }
+      data_t operator()(int i, int j) const { return conj(a_(j,i)); }
+      data_t operator()(int i) const { return conj(a_((i % N)*N + i/N)); }
+    private:
+      const C& a_;
+    };
   }
-
   template <int N> class SU : public detail::MatrixExpression<SU<N>, N> {
   public:
     typedef SU self_t;
@@ -106,9 +151,6 @@ namespace sun {
     template <class E>
     SU ( const detail::MatrixExpression<E, N>& A) : rep() {
       for (int i = 0; i < N*N; ++i) rep[i] = A(i);
-      //for (int i = 0; i < N; ++i)
-      //for (int j = 0; j < N; ++j)
-      //rep[i*N + j] = A(i, j);
     }
     ////////////////////////////////////////////////////////////
     //
@@ -165,13 +207,19 @@ namespace sun {
       for (int i = 0; i < N; ++i) tmp += rep[i*N +i];
       return tmp;
     }
+#ifdef SUN_NO_EXTEMP
     self_t dag() const{
       self_t result;
       for (int i = 0; i < N; ++i)
-	for (int j = 0; j < N; ++j)
-	  result(i, j) = conj((*this)(j, i));
+    	for (int j = 0; j < N; ++j)
+    	  result(i, j) = conj((*this)(j, i));
       return result;
     }
+#else
+    detail::MatrixDagger<SU, N> dag() const{
+      return detail::MatrixDagger<SU, N>(*this);
+    }
+#endif
     double norm() const{
       double tmp = 0;
       for (int i = 0; i < N; ++i) tmp += abs(rep[i]);
@@ -186,7 +234,7 @@ namespace sun {
   //
   //  \date      Thu Feb 28 16:50:49 2013
   //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
-
+#ifdef SUN_NO_EXTEMP
   template <int N, class C> SU<N> operator*(const SU<N>& A, const C& c){
     SU<N> result(A);
     return result *= c;
@@ -199,6 +247,44 @@ namespace sun {
     SU<N> result(A);
     return result *= B;
   }
+#else
+  template <class C, int N>
+  detail::ScaledMatrix<int, C, N> operator*
+  (const int& a, const detail::MatrixExpression<C, N>& A){
+    return detail::ScaledMatrix<int, C, N>(a, A);
+  }
+  template <class C, int N>
+  detail::ScaledMatrix<double, C, N> operator*
+  (const double& a, const detail::MatrixExpression<C, N>& A){
+    return detail::ScaledMatrix<double, C, N>(a, A);
+  }
+  template <class C, int N>
+  detail::ScaledMatrix<typename SU<N>::data_t, C, N> operator*
+  (const typename SU<N>::data_t& a, const detail::MatrixExpression<C, N>& A){
+    return detail::ScaledMatrix<typename SU<N>::data_t, C, N>(a, A);
+  }
+  template <class C, int N>
+  detail::ScaledMatrix<int, C, N> operator*
+  (const detail::MatrixExpression<C, N>& A, const int& a){
+    return detail::ScaledMatrix<int, C, N>(a, A);
+  }
+  template <class C, int N>
+  detail::ScaledMatrix<double, C, N> operator*
+  (const detail::MatrixExpression<C, N>& A, const double& a){
+    return detail::ScaledMatrix<double, C, N>(a, A);
+  }
+  template <class C, int N>
+  detail::ScaledMatrix<typename SU<N>::data_t, C, N> operator*
+  (const detail::MatrixExpression<C, N>& A, const typename SU<N>::data_t& a){
+    return detail::ScaledMatrix<typename SU<N>::data_t, C, N>(a, A);
+  }
+  template <class C1, class C2, int N>
+  detail::MatrixProduct<C1, C2, N> operator*
+  (const detail::MatrixExpression<C1, N>& A,
+   const detail::MatrixExpression<C2, N>& B) {
+    return detail::MatrixProduct<C1, C2, N>(A, B);
+  }
+#endif
   template <int N, class C> SU<N> operator/(const SU<N>& A, const C& c){
     SU<N> result(A);
     return result /= c;

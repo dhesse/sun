@@ -100,10 +100,16 @@ template <class C> inline complex operator-(const C& a, const complex& b){
 template <class C> inline complex operator-(const complex& b, const C& a){
   return complex(b) -= a;
 }
-template <class C> inline complex operator*(const C& a, const complex& b){
+inline complex operator*(const int& a, const complex& b){
   return complex(b) *= a;
 }
-template <class C> inline complex operator*(const complex& b, const C& a){
+inline complex operator*(const complex& b, const int& a){
+  return complex(b) *= a;
+}
+inline complex operator*(const double& a, const complex& b){
+  return complex(b) *= a;
+}
+inline complex operator*(const complex& b, const double& a){
   return complex(b) *= a;
 }
 template <class C> inline complex operator/(const C& a, const complex& other){

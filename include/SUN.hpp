@@ -1,6 +1,6 @@
 #ifndef SUN_H
 #define SUN_H
-#include <complex>
+#include <cplx.hpp>
 #include <tr1/array>
 
 namespace sun {
@@ -38,7 +38,19 @@ namespace sun {
   template <int N> class SU {
   public:
     typedef SU self_t;
-    typedef std::complex<double> data_t;
+    ////////////////////////////////////////////////////////////
+    //
+    //  Choose wich complex type to use. We give the user the choice
+    //  to use either std::complex<double> or our own naive
+    //  implementation. The latter is faster (unless you compile using
+    //  the -ffast-math option), the reason for which is that any
+    //  naive implementation will NOT conform with the IEEE and ISO
+    //  standards. Doing so will slow down the code.
+    //
+    //  \date      Fri Mar  1 09:58:24 2013
+    //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
+    //typedef std::complex<double> data_t; // IEEE conformal
+    typedef complex data_t; // Custom implementation
     typedef std::tr1::array<data_t, N*N> rep_t;
     ////////////////////////////////////////////////////////////
     //
@@ -136,6 +148,7 @@ namespace sun {
   }
   template <class R> SU<3> SU3rand(R& Rand){
     SU<3> result;
+    typedef SU<3>::data_t cplx;
     static double twopi = std::atan(1.0) * 8.0;
     static double soneo3 = std::sqrt( 1./ 3);
     double g[8], r, t;
@@ -150,15 +163,15 @@ namespace sun {
     }
     g[7] *= soneo3;
 
-    result(0) = std::complex<double>(0,g[7]+g[6]);
-    result(1) = std::complex<double>(g[1],g[0]);
-    result(2) = std::complex<double>(g[3],g[2]);
-    result(3) = std::complex<double>(-g[1],g[0]);
-    result(4) = std::complex<double>(0,g[7]-g[6]);
-    result(5) = std::complex<double>(g[5],g[4]);
-    result(6) = std::complex<double>(-g[3],g[2]);
-    result(7) = std::complex<double>(g[4],-g[5]);
-    result(8) = std::complex<double>(0,-g[7]*2);
+    result(0) = cplx(0,g[7]+g[6]);
+    result(1) = cplx(g[1],g[0]);
+    result(2) = cplx(g[3],g[2]);
+    result(3) = cplx(-g[1],g[0]);
+    result(4) = cplx(0,g[7]-g[6]);
+    result(5) = cplx(g[5],g[4]);
+    result(6) = cplx(-g[3],g[2]);
+    result(7) = cplx(g[4],-g[5]);
+    result(8) = cplx(0,-g[7]*2);
     return result;
   }
 }

@@ -33,25 +33,90 @@ namespace sun {
       for (int i = 0; i < N*N; ++i) A(i) /= c;
       return A;
     }
-  }
-
-  template <int N> class SU {
-  public:
-    typedef SU self_t;
     ////////////////////////////////////////////////////////////
     //
-    //  Choose wich complex type to use. We give the user the choice
-    //  to use either std::complex<double> or our own naive
-    //  implementation. The latter is faster (unless you compile using
-    //  the -ffast-math option), the reason for which is that any
-    //  naive implementation will NOT conform with the IEEE and ISO
-    //  standards. Doing so will slow down the code.
+    //  Base class for Matrix expression templates using the curiously
+    //  recurring template pattern.
     //
-    //  \date      Fri Mar  1 09:58:24 2013
+    //  \date      Fri Mar  1 14:30:16 2013
     //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
-    //typedef std::complex<double> data_t; // IEEE conformal
-    typedef complex data_t; // Custom implementation
-    typedef std::tr1::array<data_t, N*N> rep_t;
+    template <class C, int N> class MatrixExpression {
+    public:
+      //  Choose wich complex type to use. We give the user the choice
+      //  to use either std::complex<double> or our own naive
+      //  implementation. The latter is faster (unless you compile using
+      //  the -ffast-math option), the reason for which is that any
+      //  naive implementation will NOT conform with the IEEE and ISO
+      //  standards. Doing so will slow down the code.
+      //typedef std::complex<double> data_t; // IEEE conformal
+      typedef complex data_t; // Custom implementation
+      typedef std::tr1::array<data_t, N*N> rep_t;
+      data_t operator()(int i, int j) const {
+	return (static_cast<const C&>(*this))(i, j);
+      }
+      data_t operator()(int i) const {
+	return (static_cast<const C&>(*this))(i);
+      }
+      operator C&() { return static_cast<C&>(*this); }
+      operator C const&() const { return static_cast<const C&>(*this); }
+    };
+    ////////////////////////////////////////////////////////////
+    //
+    //  Expression template for matrix product.
+    //
+    //  \date      Fri Mar  1 14:31:23 2013
+    //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
+    template <class C1, class C2, int N> class MatrixProduct :
+      public MatrixExpression<MatrixProduct<C1, C2, N>, N>{
+    public:
+      typedef typename
+      MatrixExpression<MatrixProduct<C1, C2, N>, N>::data_t data_t;
+      MatrixProduct(const MatrixExpression<C1, N>& aa,
+		    const MatrixExpression<C2, N>& bb) : a(aa), b(bb){ };
+      data_t operator()(int i, int j) const {
+	data_t tmp = 0;
+	for (int k = 0; k < N; ++k)
+	  tmp += a(i, k) * b(k, j);
+	return tmp;
+      }
+      data_t operator()(int l) const {
+	data_t tmp = 0;
+	int i = l / N, j = l % N;
+	for (int k = 0; k < N; ++k)
+	  tmp += a(i, k) * b(k, j);
+	return tmp;
+      }
+    private:
+      const C1& a;
+      const C2& b;
+    };
+  }
+
+  template <int N> class SU : public detail::MatrixExpression<SU<N>, N> {
+  public:
+    typedef SU self_t;
+    typedef typename detail::MatrixExpression<SU, N>::data_t data_t;
+    typedef typename detail::MatrixExpression<SU, N>::rep_t rep_t;
+    ////////////////////////////////////////////////////////////
+    //
+    //  Construct from MatrixExpression
+    //
+    //  \date      Fri Mar  1 11:01:15 2013
+    //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
+    template <class E>
+    SU ( const detail::MatrixExpression<E, N>& A) : rep() {
+      for (int i = 0; i < N*N; ++i) rep[i] = A(i);
+      //for (int i = 0; i < N; ++i)
+      //for (int j = 0; j < N; ++j)
+      //rep[i*N + j] = A(i, j);
+    }
+    ////////////////////////////////////////////////////////////
+    //
+    //  Default constructor.
+    //
+    //  \date      Fri Mar  1 11:04:26 2013
+    //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
+    SU () : rep() { }
     ////////////////////////////////////////////////////////////
     //
     //  Element access. Note that tere is no range-checking.
@@ -148,7 +213,7 @@ namespace sun {
   }
   template <class R> SU<3> SU3rand(R& Rand){
     SU<3> result;
-    typedef SU<3>::data_t cplx;
+    typedef typename SU<3>::data_t cplx;
     static double twopi = std::atan(1.0) * 8.0;
     static double soneo3 = std::sqrt( 1./ 3);
     double g[8], r, t;

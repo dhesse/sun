@@ -130,3 +130,9 @@ TEST(Arithmetic, trace){
   SU<4>::data_t known = A(0,0) + A(1,1) + A(2,2) + A(3,3);
   ASSERT_CPLX_EQ(known, A.tr());
 }
+
+TEST(ExpressionTemplates, Product){
+  SU<3> A(rsu<3>()), B(rsu<3>()), C = A*B;
+  SU<3> D(detail::MatrixProduct<SU<3>, SU<3>, 3>(A,B));
+  ASSERT_TRUE(almost_equal(D,C));
+}

@@ -4,6 +4,8 @@
 #include <tr1/array>
 #include <complex>
 
+#define SUN_NO_EXTEMP
+
 namespace sun {
 
   template <int N> class SU;

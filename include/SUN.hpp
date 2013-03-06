@@ -1,3 +1,13 @@
+////////////////////////////////////////////////////////////
+//
+//  File: SUN.hpp
+//
+//  Here, I implement a generic NxN complex matrix arithmetic. I named
+//  the classes SU(N), because we will use it for SU(N) matrices, but
+//  one may use them for any generic complex square matrix.
+//
+//  \date      Wed Mar  6 11:10:42 2013
+//  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
 #ifndef SUN_H
 #define SUN_H
 #include <cplx.hpp>
@@ -11,6 +21,12 @@ namespace sun {
   template <int N> class SU;
 
   namespace detail {
+    ////////////////////////////////////////////////////////////
+    //
+    //  Implementation of SU(N) arithmetic
+    //
+    //  \date      Wed Mar  6 11:10:17 2013
+    //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
     template <int N> SU<N> mul( const SU<N>& A, const SU<N>& B ){
       SU<N> C;
       for (int i = 0; i< N; ++i)
@@ -139,11 +155,18 @@ namespace sun {
       const C& a_;
     };
   }
+  ////////////////////////////////////////////////////////////
+  //
+  //  SU(N) class template
+  //
+  //  \date      Wed Mar  6 11:09:06 2013
+  //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
   template <int N> class SU : public detail::MatrixExpression<SU<N>, N> {
   public:
     typedef SU self_t;
     typedef typename detail::MatrixExpression<SU, N>::data_t data_t;
     typedef typename detail::MatrixExpression<SU, N>::rep_t rep_t;
+    static const int rep_size = N*N;
     ////////////////////////////////////////////////////////////
     //
     //  Construct from MatrixExpression

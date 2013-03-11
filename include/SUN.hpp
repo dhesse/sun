@@ -167,6 +167,19 @@ namespace sun {
     typedef typename detail::MatrixExpression<SU, N>::data_t data_t;
     typedef typename detail::MatrixExpression<SU, N>::rep_t rep_t;
     static const int rep_size = N*N;
+    static const int size = N;
+    ////////////////////////////////////////////////////////////
+    //
+    //  Iterator access
+    //
+    //  \date      Wed Mar  6 18:28:15 2013
+    //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
+    typedef typename rep_t::iterator iterator;
+    typedef typename rep_t::const_iterator const_iterator;
+    iterator begin() { return rep.begin(); }
+    iterator end() { return rep.end(); }
+    const_iterator begin() const { return rep.begin(); }
+    const_iterator end() const { return rep.end(); }
     ////////////////////////////////////////////////////////////
     //
     //  Construct from MatrixExpression
@@ -231,6 +244,14 @@ namespace sun {
       data_t tmp = 0;
       for (int i = 0; i < N; ++i) tmp += rep[i*N +i];
       return tmp;
+    }
+    self_t reh() const{
+      self_t result(*this);
+      result -= this->dag();
+      result *= .5;
+      complex troN = result.tr() / N;
+      for (int i = 0; i < N; ++i) result(i,i) -= troN;
+      return result;
     }
 #ifdef SUN_NO_EXTEMP
     self_t dag() const{
@@ -348,6 +369,26 @@ namespace sun {
     result(6) = cplx(-g[3],g[2]);
     result(7) = cplx(g[4],-g[5]);
     result(8) = cplx(0,-g[7]*2);
+    return result;
+  }
+  template <class R> SU<2> SU2rand(R& Rand){
+    SU<2> result;
+    typedef typename SU<2>::data_t cplx;
+    static double twopi = std::atan(1.0) * 8.0;
+    double g[4], r, t;
+    // get flat distribution
+    Rand.ranlxd(g, g+4);
+    // make gaussian
+    for (int i = 0; i < 4; i+=2){
+      t = twopi*g[i];
+      r = std::sqrt( -std::log((1. - g[i+1])) );
+      g[i]   = r*std::cos(t);
+      g[i+1] = r*std::sin(t);
+    }
+    result(0,0) = cplx(0, g[2]);
+    result(0,1) = cplx(g[1], g[0]);
+    result(1,0) = cplx(-g[1], g[0]);
+    result(1,1) = cplx(0, -g[2]);
     return result;
   }
 }

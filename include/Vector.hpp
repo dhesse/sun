@@ -56,6 +56,7 @@ namespace sun{
     typedef typename detail::MatrixExpression<SU<N>, N>::data_t data_t;
     typedef typename detail::MatrixExpression<SU<N>, N>::rep_t rep_t;
     static const int rep_size = N;
+    static const int size = N;
     ////////////////////////////////////////////////////////////
     //
     //  Element access. No range checking is done!

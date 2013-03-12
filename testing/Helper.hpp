@@ -47,4 +47,17 @@ template <int N> bool equal(const SU<N>& A, const SU<N>& B){
     if (abs( A(n) - B(n) ) != 0.0) result = false;
   return result;
 }
+
+template <class C> bool near(const C& a, const C& b){
+  typename C::const_iterator ait = a.begin(), bit = b.begin();
+  for (; ait != a.end(); ++ait, ++bit)
+    if (abs( *ait - *bit ) > std::numeric_limits<double>::epsilon() * 5)
+      return false;
+  return true;
+}
+template <class C> void randomize(C& a){
+  typename C::iterator i;
+  for (i = a.begin(); i != a.end(); ++i)
+    *i = (1. - 2.*rand()/RAND_MAX);
+}
 #endif

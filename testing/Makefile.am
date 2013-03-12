@@ -8,11 +8,12 @@ lib_libgtest_main_la_LIBADD = lib/libgtest.la
 
 LDADD = lib/libgtest_main.la
 
-bin_PROGRAMS = Generic SUNArithmetic VectorArithmetic Complex
+bin_PROGRAMS = Generic SUNArithmetic VectorArithmetic Complex Veclike
 
 SUNArithmetic_SOURCES = SUNArithmetic.cc
 VectorArithmetic_SOURCES = VectorArithmetic.cc
 Generic_SOURCES = Generic.cc
 Complex_SOURCES = Complex.cc
+Veclike_SOURCES = Veclike.cc
 
 TESTS = ${bin_PROGRAMS}

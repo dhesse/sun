@@ -7,9 +7,10 @@
 using namespace veclike;
 
 TEST(Arithmetic, UnaryOp){
+  class dummy { };
   typedef std::vector<double> Container;
   typedef GenWithSize<Container> Generator;
-  typedef Veclike<Container, GenWithSize> Vec;
+  typedef Veclike<Container, GenWithSize, dummy> Vec;
   Generator a(10);
   Vec A(a);
   randomize(A);
@@ -27,9 +28,9 @@ TEST(Arithmetic, UnaryOp){
   ASSERT_TRUE(near(A, D));
 }
 
-struct foo : public Veclike<std::vector<double>, GenWithSize> {
+struct foo : public Veclike<std::vector<double>, GenWithSize, foo> {
   foo(const GenWithSize<std::vector<double> >& g) :
-    Veclike<std::vector<double>, GenWithSize>(g) { }
+    Veclike<std::vector<double>, GenWithSize, foo>(g) { }
 };
 
 TEST(Arithmetic, UnaryOpInherited){

@@ -34,14 +34,17 @@ namespace veclike {
   //
   //  \Date      Tue Mar 12 21:25:23 2013
   //  \author    Dirk Hesse <dirk.hesse@fis.unipr.it>
-  template <class Container, template <class> class Creator> class Veclike {
+  template <class Container, template <class> class Creator,
+            class Child> class Veclike {
   public:
     typedef Veclike self_t;
+    typedef Child child_t;
     typedef typename Container::value_type value_t;
     typedef typename Container::reference reference;
     typedef typename Container::const_reference const_reference;
     typedef typename Container::iterator iterator;
     typedef typename Container::const_iterator const_iterator;
+
 
     Veclike() : rep(Creator<Container>::gen_default()) { }
     explicit Veclike(const Creator<Container>& creator) : rep(creator.gen()) { }
@@ -53,6 +56,8 @@ namespace veclike {
     iterator end(){ return rep.end(); }
     const_iterator begin() const { return rep.begin(); }
     const_iterator end() const { return rep.end(); }
+
+    void swap(self_t& other){ std::swap(rep, other.rep); }
 
     template <typename T> self_t& operator*=(const T& other){
       return mul_assign_impl(other,
@@ -94,5 +99,18 @@ namespace veclike {
       return *this;
     }
   };
+
+  template <class Co, template <class> class Cr, class Child>
+  Child operator+ (const Child& A, const Veclike<Co, Cr, Child>& B){
+    Child result(A);
+    result += B;
+    return result;
+  }
+  template <class Co, template <class> class Cr, class Child>
+  Child operator- (const Child& A, const Veclike<Co, Cr, Child>& B){
+    Child result(A);
+    result -= B;
+    return result;
+  }
 }
 #endif /* _VECLIKE_H_ */

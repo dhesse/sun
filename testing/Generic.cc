@@ -7,8 +7,8 @@ using namespace sun;
 TEST(Constructor, InitToZero){
   SU<3> A;
   for (int i = 0; i < 9; ++i){
-    ASSERT_EQ(A(i).real(), 0.0);
-    ASSERT_EQ(A(i).imag(), 0.0);
+    ASSERT_EQ(A[i].real(), 0.0);
+    ASSERT_EQ(A[i].imag(), 0.0);
   }
 }
 

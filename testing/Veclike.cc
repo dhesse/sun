@@ -6,7 +6,6 @@
 
 using namespace veclike;
 
-
 TEST(Arithmetic, UnaryOp){
   typedef std::vector<double> Container;
   typedef GenWithSize<Container> Generator;
@@ -17,15 +16,15 @@ TEST(Arithmetic, UnaryOp){
   Vec B(A), C(A), D(A);
   B += A;
   C *= 2;
-  //D -= -A;
+  D -= -A;
   ASSERT_TRUE(near(B, C));
-  //ASSERT_TRUE(near(B, D));
+  ASSERT_TRUE(near(B, D));
   C -= A;
   ASSERT_TRUE(near(A, C));
-  //B += -A;
-  //ASSERT_TRUE(near(A, B));
-  //D /= 2;
-  //ASSERT_TRUE(near(A, D));
+  B += -A;
+  ASSERT_TRUE(near(A, B));
+  D /= 2;
+  ASSERT_TRUE(near(A, D));
 }
 
 struct foo : public Veclike<std::vector<double>, GenWithSize> {
@@ -42,9 +41,13 @@ TEST(Arithmetic, UnaryOpInherited){
   foo B(A), C(A), D(A);
   B += A;
   C *= 2;
-  //D -= -A;
+  D -= -A;
   ASSERT_TRUE(near(B, C));
-  //ASSERT_TRUE(near(B, D));
+  ASSERT_TRUE(near(B, D));
   C -= A;
   ASSERT_TRUE(near(A, C));
+  B += -A;
+  ASSERT_TRUE(near(A, B));
+  D /= 2;
+  ASSERT_TRUE(near(A, D));
 }

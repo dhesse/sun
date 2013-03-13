@@ -70,10 +70,15 @@ namespace veclike {
       for (int i = 0; i < rep.size(); ++i) rep[i] -= other[i];
       return *this;
     }
+
+    self_t operator-() const {
+      self_t result(*this);
+      return result *= -1;
+    }
   private:
     Container rep;
     template <typename T> self_t& mul_assign_impl(const T& other, detail::True){
-#ifdef __GXX_EXPERIMENTAL_CXX0X__
+#if __cplusplus == 201103
       for (auto &i : rep) i *= other;
 #else
       for (int i = 0; i < rep.size(); ++i) rep[i] *= other;
@@ -81,7 +86,7 @@ namespace veclike {
       return *this;
     }
     template <typename T> self_t& div_assign_impl(const T& other, detail::True){
-#ifdef __GXX_EXPERIMENTAL_CXX0X__
+#if __cplusplus == 201103
       for (auto &i : rep) i /= other;
 #else
       for (int i = 0; i < rep.size(); ++i) rep[i] /= other;

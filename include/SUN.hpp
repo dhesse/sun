@@ -154,7 +154,7 @@ namespace sun {
     result[4] = cplx(0,g[7]-g[6]);
     result[5] = cplx(g[5],g[4]);
     result[6] = cplx(-g[3],g[2]);
-    result[7] = cplx(g[4],-g[5]);
+    result[7] = cplx(-g[5],g[4]);
     result[8] = cplx(0,-g[7]*2);
     return result;
   }

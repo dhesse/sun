@@ -24,11 +24,11 @@ struct complex {
   const double& real() const { return r; }
   double& imag() { return i; }
   const double& imag() const { return i; }
-  template <class C> complex& operator+=(const C& other){
+  complex& operator+=(const double& other){
     r += other;
     return *this;
   }
-  template <class C> complex& operator-=(const C& other){
+  complex& operator-=(const double& other){
     r -= other;
     return *this;
   }

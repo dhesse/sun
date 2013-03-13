@@ -15,6 +15,7 @@ namespace veclike {
     template <typename T> struct ScalarMultiplyCheck { typedef False type; };
     template <> struct ScalarMultiplyCheck<int> { typedef True type; };
     template <> struct ScalarMultiplyCheck<double> { typedef True type; };
+    template <> struct ScalarMultiplyCheck<complex> { typedef True type; };
   }
   template <class Container> struct DefaultConstruct {
     static Container gen_default() { return Container(); }
